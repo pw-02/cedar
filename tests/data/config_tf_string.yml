@@ -1,0 +1,14 @@
+physical_plan:
+  graph:
+    1: ''
+  pipes:
+    0:
+      name: MapperPipe_string_lower
+      variant: TF
+    1:
+      name: TFLocalLinePipe
+      variant: TF
+      variant_ctx:
+        num_parallel_calls: -1
+      fused_pipes:
+        - 0

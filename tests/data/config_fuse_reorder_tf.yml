@@ -1,0 +1,28 @@
+physical_plan:
+  graph:
+    4: '1'
+    1: '2'
+    2: '5'
+    5: ''
+  pipes:
+    0:
+      name: MapperPipe__add_one
+      variant: TF
+    1:
+      name: MapperPipe__cast
+      variant: TF
+    2:
+      name: MapperPipe__fill_tensor
+      variant: TF
+    3:
+      name: MapperPipe__add_one
+      variant: TF
+    4:
+      name: IterSourcePipe
+      variant: INPROCESS
+    5:
+      name: FusedPipe
+      variant: TF
+      fused_pipes: 
+        - 3
+        - 0

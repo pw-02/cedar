@@ -1,0 +1,41 @@
+﻿Pipeline,Setup,Runtime
+CV-torch,Baseline,242.3816667
+CV-torch,plus parallelism,49.378
+CV-torch,plus reorder,28.204
+CV-torch,plus offload,16.98566667
+CV-torch,plus fusion,11.11533333
+CV-tf,Baseline,45.455
+CV-tf,plus parallelism,43.214
+CV-tf,plus reorder,38.269
+CV-tf,plus offload,38.2
+CV-tf,plus fusion,10.627
+SSD-torch,Baseline,960.229
+SSD-torch,plus parallelism,191.033
+SSD-torch,plus reorder,88.535
+SSD-torch,plus offload,64.593
+SSD-torch,plus fusion,52.788
+SSD-tf,Baseline,235.187
+SSD-tf,plus parallelism,234.49
+SSD-tf,plus reorder,40.469
+SSD-tf,plus offload,40.373
+SSD-tf,plus fusion,31.32
+NLP-torch,Baseline,53.295
+NLP-torch,plus parallelism,54.09
+NLP-torch,plus reorder,53.664
+NLP-torch,plus offload,25.692
+NLP-torch,plus fusion,20.98866667
+NLP-hf-tf,Baseline,248.723
+NLP-hf-tf,plus parallelism,250.318
+NLP-hf-tf,plus reorder,251.236
+NLP-hf-tf,plus offload,93.021
+NLP-hf-tf,plus fusion,41.52766667
+NLP-tf,Baseline,241.764
+NLP-tf,plus parallelism,238.533
+NLP-tf,plus reorder,239.402
+NLP-tf,plus offload,208.491
+NLP-tf,plus fusion,35.94933333
+ASR,Baseline,878.4
+ASR,plus parallelism,389.28
+ASR,plus reorder,376.75
+ASR,plus offload,225.05
+ASR,plus fusion,20.043

@@ -1,0 +1,4 @@
+# Ignore everything in datasets dir.
+# Use scripts to fetch datasets
+*
+!.gitignore

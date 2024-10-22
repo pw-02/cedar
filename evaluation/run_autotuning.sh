@@ -1,0 +1,6 @@
+#!/bin/bash 
+ python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_controller_dataset.py --master_feature_config pipelines/simclrv2/configs/eval_controller_remote.yaml --use_ray --ray_ip 10.138.0.7 --num_epochs 5 --iteration_time 0.05
+ python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_controller_dataset.py --master_feature_config pipelines/simclrv2/configs/eval_controller_remote.yaml --use_ray --ray_ip 10.138.0.50 --num_epochs 5 --iteration_time 0.02
+ python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_controller_dataset.py --master_feature_config pipelines/simclrv2/configs/eval_controller_remote.yaml --use_ray --ray_ip 10.138.0.50 --num_epochs 5 --iteration_time 0.01
+ python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_controller_dataset.py --master_feature_config pipelines/simclrv2/configs/eval_controller_remote.yaml --use_ray --ray_ip 10.138.0.50 --num_epochs 5 --iteration_time 0.005
+ python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_controller_dataset.py --master_feature_config pipelines/simclrv2/configs/eval_controller_remote.yaml --use_ray --ray_ip 10.138.0.50 --num_epochs 5 --iteration_time 0.00333

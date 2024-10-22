@@ -1,0 +1,11 @@
+tensorflow==2.14.0
+tensorflow-addons[tensorflow]
+pyyaml
+ray[default]==2.7.0
+Pympler
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.0.1
+torchvision==0.15.2
+torchaudio==2.0.2
+torchdata

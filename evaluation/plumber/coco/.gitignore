@@ -1,0 +1,7 @@
+__pycache__/
+logdir/
+*.pb
+*.txt
+*.pdf
+*.dot
+*.ps

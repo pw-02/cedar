@@ -1,0 +1,49 @@
+logical_plan:
+  graph:
+    0: ''
+    1: '0'
+    2: '1'
+    3: '2'
+  pipes:
+    0:
+      name: NoopPipe
+    1:
+      name: NoopPipe
+    2:
+      name: NoopPipe
+    3:
+      name: IterSourcePipe
+physical_plan:
+  graph:
+    0: ''
+    1: '0'
+    2: '4'
+    3: '2'
+    4: '1'
+  n_local_workers: 1
+  pipes:
+    0:
+      name: NoopPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    1:
+      name: NoopPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    2:
+      name: NoopPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    3:
+      name: IterSourcePipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    4:
+      name: NoopOptimizerPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS

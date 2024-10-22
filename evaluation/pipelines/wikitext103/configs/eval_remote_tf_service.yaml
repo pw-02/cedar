@@ -1,0 +1,30 @@
+physical_plan:
+  graph:
+    3: '4'
+    4: ''
+  n_local_workers: 1
+  pipes:
+    0:
+      name: MapperPipe__embedding
+      variant: INPROCESS
+    1:
+      name: MapperPipe__truncate
+      variant: INPROCESS
+    2:
+      name: MapperPipe__tokenize
+      variant: INPROCESS
+    3:
+      fused_pipes:
+      - 2
+      - 1
+      - 0
+      name: TFLocalLinePipe
+      variant: TF
+      variant_ctx:
+        num_parallel_calls: -1
+        variant_type: TF
+    4:
+      name: PrefetcherPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS

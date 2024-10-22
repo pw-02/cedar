@@ -1,0 +1,77 @@
+physical_plan:
+  graph:
+    0: ''
+    1: '0'
+    2: '5'
+    3: '6'
+    4: '7'
+    5: '4'
+    6: '2'
+    7: '1'
+    8: '3'
+    9: '8'
+  n_local_workers: 8
+  pipes:
+    0:
+      name: BatcherPipe(batch_size=1)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    1:
+      name: MapperPipe_Normalize(mean=(0.1307,), std=(0.3081,))
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    2:
+      name: MapperPipe_GaussianBlur(kernel_size=(11, 11), sigma=(0.1, 2.0))
+      variant: RAY
+      variant_ctx:
+        max_inflight: 100
+        max_prefetch: 100
+        n_actors: 2
+        submit_batch_size: 16
+        use_threads: true
+        variant_type: RAY
+    3:
+      name: MapperPipe_Grayscale(num_output_channels=1)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    4:
+      name: MapperPipe_ColorJitter(brightness=(0.9, 1.1), contrast=(0.9, 1.1), saturation=(0.9,
+        1.1), hue=(-0.1, 0.1))
+      variant: RAY
+      variant_ctx:
+        max_inflight: 100
+        max_prefetch: 100
+        n_actors: 2
+        submit_batch_size: 16
+        use_threads: true
+        variant_type: RAY
+    5:
+      name: MapperPipe_RandomHorizontalFlip(p=0.5)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    6:
+      name: MapperPipe_RandomResizedCrop(size=(244, 244), scale=(0.08, 1.0), ratio=(0.75,
+        1.3333), interpolation=bilinear, antialias=warn)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    7:
+      name: MapperPipe_to_float
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    8:
+      name: ImageReaderPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    9:
+      name: LocalFSListerPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+  

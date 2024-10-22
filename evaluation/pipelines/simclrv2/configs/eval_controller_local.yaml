@@ -1,0 +1,65 @@
+physical_plan: 
+  graph:
+    0: '10'
+    1: '0'
+    7: '1'
+    9: '11'
+    10: ''
+    11: '7'
+  n_local_workers: 1
+  pipes:
+    0:
+      name: BatcherPipe(batch_size=1)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    1:
+      name: MapperPipe_Normalize(mean=(0.1307,), std=(0.3081,))
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    2:
+      name: MapperPipe_GaussianBlur(kernel_size=(11, 11), sigma=(0.1, 2.0))
+      variant: INPROCESS
+    3:
+      name: MapperPipe_Grayscale(num_output_channels=1)
+      variant: INPROCESS
+    4:
+      name: MapperPipe_ColorJitter(brightness=(0.9, 1.1), contrast=(0.9, 1.1), saturation=(0.9,
+        1.1), hue=(-0.1, 0.1))
+      variant: INPROCESS
+    5:
+      name: MapperPipe_RandomHorizontalFlip(p=0.5)
+      variant: INPROCESS
+    6:
+      name: MapperPipe_RandomResizedCrop(size=(244, 244), scale=(0.08, 1.0), ratio=(0.75,
+        1.3333), interpolation=bilinear, antialias=warn)
+      variant: INPROCESS
+    7:
+      name: MapperPipe_to_float
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    8:
+      name: MapperPipe_read_image_pytorch
+      variant: INPROCESS
+    9:
+      name: LocalFSListerPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    10:
+      name: PrefetcherPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    11:
+      fused_pipes:
+      - 8
+      - 3
+      - 6
+      - 2
+      - 5
+      - 4
+      name: FusedPipe
+      variant: INPROCESS

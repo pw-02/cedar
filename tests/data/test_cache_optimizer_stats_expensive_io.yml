@@ -1,0 +1,41 @@
+baseline:
+  input_sizes:
+    0: 1
+    1: 100
+    2: 100
+    3: 100
+    4: 100
+    5: 1
+    6: 1
+  latencies:
+    0: 1
+    1: 1
+    2: 1
+    3: 1
+    4: 1
+    5: 1
+    6: 1
+  output_sizes:
+    0: 1
+    1: 1
+    2: 100
+    3: 100
+    4: 100
+    5: 100
+    6: 1
+  throughput: 100
+offloads:
+  RAY:
+    1:
+      throughput: 100
+    2:
+      throughput: 1
+    3:
+      throughput: 1
+    4:
+      throughput: 100
+    5:
+      throughput: 150
+disk_info:
+  read_latency: 100
+  write_latency: 100
