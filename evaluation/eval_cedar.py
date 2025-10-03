@@ -214,6 +214,8 @@ def main():
         "--master_feature_config",
         type=str,
         help="If path specified, use this feature config for all features.",
+        default="",
+        # default="pipelines/simclrv2/configs/eval_cedar_local.yaml",
     )
     parser.add_argument(
         "--use_ray",
@@ -238,6 +240,7 @@ def main():
         type=str,
         default="",
         help="Path to profiled data (as a YAML file) to use for optimization.",
+        # default="pipelines/simclrv2/stats/cedar_stats.yaml",
     )
     parser.add_argument(
         "--run_profiling",
@@ -306,6 +309,10 @@ def main():
     )
 
     args = parser.parse_args()
+    if args.use_ray:
+        print("Ray enabled")
+    else:
+        print("Running without Ray")
     logging.basicConfig(level=args.log_level.upper())
 
     spec = create_spec(args)

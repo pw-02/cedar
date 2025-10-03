@@ -11,6 +11,7 @@ from cedar.pipes.io import (
     LineReaderPipe,
     ImageReaderPipe,
     WebReaderPipe,
+    S3ImageReaderPipe,
 )
 from cedar.pipes.map import MapperPipe
 from cedar.pipes.noop import NoopPipe
@@ -68,6 +69,8 @@ __all__ = [
     "RayDSPipeVariantContext",
     "RayPipeVariant",
     "RayPipeVariantContext",
+    "S3ImageReaderPipe",
+    "S3ImageReaderPipeVariant",
     "SMPPipeVariant",
     "SMPPipeVariantContext",
     "TFOutputHint",

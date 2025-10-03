@@ -1,6 +1,7 @@
 import pathlib
 import torch
 import multiprocessing as mp
+import logging
 
 from typing import List
 
@@ -15,6 +16,7 @@ from cedar.pipes import (
     MapperPipe,
     BatcherPipe,
     ImageReaderPipe,
+    S3ImageReaderPipe,
 )
 from cedar.sources import LocalFSSource
 from cedar.sources import S3ImageSource
@@ -39,21 +41,21 @@ class SimCLRV2Feature(Feature):
 
     def _compose(self, source_pipes: List[Pipe]):
         fp = source_pipes[0]
-        fp = ImageReaderPipe(fp, mode=ImageReadMode.RGB).fix()
+        # fp = ImageReaderPipe(fp, mode=ImageReadMode.RGB).fix()
         fp = MapperPipe(fp, to_float, tag="float")
-        fp = MapperPipe(
-            fp,
-            transforms.RandomResizedCrop((IMG_HEIGHT, IMG_WIDTH)),
-            tag="crop",
-        )
-        fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
-            ["crop"]
-        )
-        fp = MapperPipe(
-            fp, transforms.ColorJitter(0.1, 0.1, 0.1, 0.1), tag="jitter"
-        )
-        fp = MapperPipe(fp, transforms.Grayscale(num_output_channels=1))
-        fp = MapperPipe(fp, transforms.GaussianBlur(GAUSSIAN_BLUR_KERNEL_SIZE))
+        # fp = MapperPipe(
+        #     fp,
+        #     transforms.RandomResizedCrop((IMG_HEIGHT, IMG_WIDTH)),
+        #     tag="crop",
+        # )
+        # fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
+        #     ["crop"]
+        # )
+        # fp = MapperPipe(
+        #     fp, transforms.ColorJitter(0.1, 0.1, 0.1, 0.1), tag="jitter"
+        # )
+        # fp = MapperPipe(fp, transforms.Grayscale(num_output_channels=1))
+        # fp = MapperPipe(fp, transforms.GaussianBlur(GAUSSIAN_BLUR_KERNEL_SIZE))
         fp = MapperPipe(
             fp, transforms.Normalize((0.1307,), (0.3081,))
         ).depends_on(["float"])
@@ -75,6 +77,8 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
             feature_config=spec.config,
             enable_controller=False,
             enable_optimizer=False,
+            # run_profiling=True,
+
         )
     else:
         dataset = DataSet(
@@ -96,3 +100,29 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
             generate_plan=spec.generate_plan,
         )
     return dataset
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+    spec = CedarEvalSpec(1, None, 1)
+    spec.run_profiling = False
+    spec.disable_optimizer = True
+    spec.disable_prefetch = True
+    # spec.disable_optimizer = True
+    spec.disable_controller = True
+    spec.disable_parallelism = True
+
+    ds = get_dataset(spec)
+    
+
+    i = 0
+    for f in ds:
+        # print(f)
+        print(f)
+        print(f.size())
+        if i == 10:
+            break
+        i += 1
+
+
+if __name__ == "__main__":
+    main()

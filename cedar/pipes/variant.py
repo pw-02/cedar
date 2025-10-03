@@ -144,6 +144,8 @@ class PipeVariant(abc.ABC):
         # if hasattr(self, "_input_iter") and self._input_iter is not None:
         #     logger.info("Already has iter")
         #     return
+        print("Creating input iter for pipe", self.p_id)
+        print("Input pipe variant:", self.input_pipe_variant)
         if self._dynamic_mutate_flag:
             logger.info(
                 "Skipping input iter reset for pipe {} "
@@ -157,6 +159,7 @@ class PipeVariant(abc.ABC):
             )
             # Only wrap for non-sources
             self._input_iter = iter(self.input_pipe_variant)
+        
         self._dynamic_mutate_flag = False
 
     def set_scale(self, resource_count: int):

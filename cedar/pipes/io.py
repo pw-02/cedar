@@ -139,6 +139,133 @@ class InProcessLineReaderPipeVariant(InProcessPipeVariant):
         ],
     )
 )
+
+
+class S3ImageReaderPipe(Pipe):
+    """
+    Given a pipe containing S3 URLs, downloads the contents of the image
+    at that URL. Yields the image as a torch.Tensor.
+
+    Args:
+        request_timeout: Timeout in seconds for downloading an image from S3.
+            Default is 5 seconds.
+        mode: Mode to read in image
+        tag: Tag to assign to this pipe.
+        is_random: Whether this pipe is random.
+    Output Format:
+    Yields torch.Tensor of shape (image_channels, image_height, image_width).
+    The values of the output tensor are dtype=uint8 in [0, 255].
+    Ordering of channels is RGB.
+    """
+
+    def __init__(
+        self,
+        input_pipe: Pipe,
+        request_timeout: int = 5,
+        mode: Optional[ImageReadMode] = None,
+        tag: Optional[str] = None,
+        is_random: bool = False,
+    ):
+        super().__init__(
+            "S3ImageReaderPipe", [input_pipe], tag=tag, is_random=is_random
+        )
+
+        if request_timeout < 1:
+            raise RuntimeError(
+                f"S3ImageReaderPipe cannot have request timeout of less than 1.\n\
+                               Expected value >= 1, got {request_timeout}"
+            )
+
+        self.request_timeout = request_timeout
+        if mode is None:
+            self.mode = ImageReadMode.UNCHANGED
+        else:
+            self.mode = mode
+
+    def _to_inprocess(
+        self, variant_ctx: InProcessPipeVariantContext
+    ) -> InProcessPipeVariant:
+        if len(self.input_pipes) != 1:
+            raise RuntimeError("S3ImageReader Pipe only accepts one input pipe.")
+
+        variant = InProcessS3ImageReaderPipeVariant(
+            self.input_pipes[0].pipe_variant,
+            self.request_timeout,
+            self.mode,
+        )
+
+        return variant
+
+    def _to_multithreaded(
+        self, variant_ctx: MultithreadedPipeVariantContext
+    ) -> MultithreadedPipeVariant:
+        if len(self.input_pipes) != 1:
+            raise RuntimeError("S3ImageReader Pipe only accepts one input pipe.")
+
+        variant = MultithreadedImageReaderTask(
+            self.input_pipes[0].pipe_variant,
+            self.request_timeout,
+            self.mode,
+        )
+        return variant
+    
+class InProcessS3ImageReaderPipeVariant(InProcessPipeVariant):
+    def __init__(
+        self,
+        input_pipe_variant: PipeVariant,
+        request_timeout: int,
+        mode: ImageReadMode,
+    ):
+        super().__init__(input_pipe_variant)
+        self.request_timeout = request_timeout
+        self.mode = mode
+
+    def _iter_impl(self):
+        while True:
+            try:
+                x = next(self._input_iter)
+                if isinstance(x, DataSample):
+                    if not x.dummy:
+                        url = x.data
+                        resp = requests.get(url, timeout=self.request_timeout)
+                        img_bytes = resp.content
+                        x.data = read_image(
+                            img_bytes, mode=self.mode
+                        )
+                    yield x
+                else:
+                    url = x
+                    resp = requests.get(url, timeout=self.request_timeout)
+                    img_bytes = resp.content
+                    yield read_image(img_bytes, mode=self.mode)
+            except StopIteration:
+                return
+            
+class MultithreadedS3ImageReaderTask(MultithreadedTask):
+    def __init__(self, input_url: str, request_timeout: int, mode: ImageReadMode):
+        super().__init__(input_url)
+        self.request_timeout = request_timeout
+        self.mode = mode
+
+    def process(self) -> Any:
+        resp = requests.get(self.input_data, timeout=self.request_timeout)
+        img_bytes = resp.content
+        return read_image(img_bytes, mode=self.mode)
+
+
+
+
+
+@cedar_pipe(
+    CedarPipeSpec(
+        is_mutable=True,
+        mutable_variants=[
+            PipeVariantType.INPROCESS,
+            PipeVariantType.MULTITHREADED,
+        ],
+    )
+)
+
 class ImageReaderPipe(Pipe):
     """
     Given a FileOpener pipe, yields the decoded tensor

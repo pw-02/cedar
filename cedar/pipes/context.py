@@ -47,6 +47,9 @@ class PipeVariantContext(abc.ABC):
         raise NotImplementedError
 
 
+
+
+
 class InProcessPipeVariantContext(PipeVariantContext):
     def __init__(self):
         self.variant_type = PipeVariantType.INPROCESS

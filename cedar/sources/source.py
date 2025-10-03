@@ -381,6 +381,7 @@ class SourcePipeVariantMixin:
         Raises:
             StopIteration when source is exhausted
         """
+        print("Creating datasamples")
         if self.sharded:
             curr_idx = self.world_size - self.rank - 1
         while True:

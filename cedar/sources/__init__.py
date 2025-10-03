@@ -11,9 +11,10 @@ __all__ = [
     "IterSource",
     "LocalFSSource",
     "LocalLineSource",
+    "S3ImageSource",
     "Source",
     "TFLocalLineSource",
-    "S3ImageSource",
 ]
+
 
 assert __all__ == sorted(__all__)

@@ -113,6 +113,7 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
 def main():
     logging.basicConfig(level=logging.INFO)
     ds = get_dataset(CedarEvalSpec(1, None, 1))
+    
 
     i = 0
     for f in ds:

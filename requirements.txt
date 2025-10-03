@@ -21,3 +21,4 @@ keras-nlp
 librosa
 pyarrow==13.0.0
 numpy==1.26.0
+boto3
