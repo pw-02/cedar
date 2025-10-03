@@ -34,7 +34,7 @@ def to_float(x):
     return x.to(torch.float32)
 
 
-class SimCLRV2Feature(Feature):
+class CIFAR10Feature(Feature):
     def __init__(self, batch_size: int):
         super().__init__()
         self.batch_size = batch_size
@@ -67,7 +67,7 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
   
     ctx = CedarContext(ray_config=spec.to_ray_config())
     source = S3ImageSource(DATASET_LOC)
-    feature = SimCLRV2Feature(batch_size=spec.batch_size)
+    feature = CIFAR10Feature(batch_size=spec.batch_size)
     feature.apply(source)
 
     if spec.config:

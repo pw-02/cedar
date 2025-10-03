@@ -48,7 +48,7 @@ class ExtendedCedarEvalSpec(CedarEvalSpec):
         self.max_training_time_sec = max_training_time_sec
         self.seed = seed
         self.results_path = results_path
-        self.cpu_only = True
+        self.cpu_only = False
         self.job_id = job_id or f"job_{int(time.time())}_{model_name}"
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if not self.cpu_only else torch.device("cpu")
 
@@ -185,15 +185,15 @@ def train_loop(
                 "train_loss": avg_loss,
                 "top1_acc": acc["top1"],
                 "top5_acc": acc["top5"],
-                # "fetch_time_s": getattr(meta, "fetch_time", 0.0),
-                # "transform_time_s": getattr(meta, "transform_time", 0.0),
-                # "grpc_overhead_s": getattr(meta, "grpc_overhead", 0.0),
-                # "total_dataload_time_s": wait_for_data_time + getattr(spec, "data_fetch_time", 0.0),
-                # "cache_hit": int(getattr(meta, "cache_hit", 0)),
+                "fetch_time_s": 0.0,
+                "transform_time_s": 0.0,
+                "grpc_overhead_s": 0.0,
+                "total_dataload_time_s": wait_for_data_time + 0.0,
+                "cache_hit": 0,
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                 "elapsed_time_s": elapsed,
-                # "cache_length": getattr(meta, "cache_length", -1),
-                # "cache_polling_time":  getattr(meta, "cache_polling_time", 0.0) #time spent polling th cache
+                "cache_length": 0,
+                "cache_polling_time": 0.0
 
             }
         )
@@ -335,7 +335,7 @@ def create_spec(args: argparse.Namespace) -> ExtendedCedarEvalSpec:
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluation Runner")
-    parser.add_argument("--dataset_file", type=str, default="")
+    parser.add_argument("--dataset_file", type=str, default="pipelines/cifar10/cedar_s3_dataset.py")
     parser.add_argument("--dataset_func", type=str, default="get_dataset")
     parser.add_argument("--batch_size", "-b", type=int, default=128)
     parser.add_argument("--num_epochs", type=int, default=1)
@@ -372,18 +372,6 @@ def main():
 
     args = parser.parse_args()
     logging.basicConfig(level=args.log_level.upper())
-
-    #append model name and timestamp to results path
-
-    # spec.run_profiling = False
-    # spec.disable_optimizer = True
-    # spec.disable_prefetch = True
-    # # spec.disable_optimizer = True
-    # spec.disable_controller = True
-    # spec.disable_parallelism = True
-
-
-
 
     args.results_path = os.path.join(args.results_path, f"{args.model_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
     os.makedirs(args.results_path, exist_ok=True)

@@ -335,7 +335,7 @@ def create_spec(args: argparse.Namespace) -> ExtendedCedarEvalSpec:
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluation Runner")
-    parser.add_argument("--dataset_file", type=str, default="pipelines/cifar10/cedar_s3_dataset.py")
+    parser.add_argument("--dataset_file", type=str, default="pipelines/imagenet/cedar_s3_dataset.py")
     parser.add_argument("--dataset_func", type=str, default="get_dataset")
     parser.add_argument("--batch_size", "-b", type=int, default=128)
     parser.add_argument("--num_epochs", type=int, default=1)
