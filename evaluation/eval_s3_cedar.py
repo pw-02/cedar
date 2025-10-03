@@ -155,8 +155,8 @@ def main():
         "--dataset_file",
         type=str,
         help="Path to Python file defining dataset.",
-        default="",
-        required=True,
+        default="evaluation/pipelines/imagenet/cedar_s3_dataset.py",
+        required=False,
     )
     parser.add_argument(
         "--dataset_func",
@@ -316,6 +316,7 @@ def main():
     logging.basicConfig(level=args.log_level.upper())
 
     spec = create_spec(args)
+    spec.run_profiling = True
 
     # Set torch parallelism
     if not args.allow_torch_parallelism:

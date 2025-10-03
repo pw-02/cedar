@@ -24,7 +24,7 @@ from cedar.sources import S3ImageSource
 from evaluation.cedar_utils import CedarEvalSpec
 
 
-DATASET_LOC = "s3://imagenet1k-sdl/val/"
+DATASET_LOC = "s3://imagenet1k-sdl/val"
 IMG_HEIGHT = 244
 IMG_WIDTH = 244
 GAUSSIAN_BLUR_KERNEL_SIZE = 11

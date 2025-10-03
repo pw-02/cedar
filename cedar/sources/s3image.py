@@ -65,7 +65,7 @@ class S3ImageDataset(Dataset):
         for page in page_iterator:
             for obj in page.get('Contents', []):
                 key = obj['Key']
-                if key.endswith(('.jpg', '.jpeg', '.png', '.bmp')):  # or other formats you expect
+                if key.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp')):  # or other formats you expect
                     keys.append(key)
         return keys
     
