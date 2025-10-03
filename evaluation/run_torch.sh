@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #cv-torch
-python eval_torch.py --dataset_file pipelines/simclrv2/torch_dataset.py --num_workers 8
+python eval_torch.py --dataset_file pipelines/simclrv2/torch_dataset_s3.py --num_workers 0
 #nlp-torch
-python eval_torch.py --dataset_file pipelines/wikitext103/torch_dataset.py --num_workers 8 --num_total_samples 100000
-#asr
-python eval_torch.py --dataset_file pipelines/commonvoice/torch_dataset.py --num_workers 8 --num_total_samples 10000
-# ssd
-python eval_torch.py --dataset_file pipelines/coco/torch_dataset.py --num_workers 8
+# python eval_torch.py --dataset_file pipelines/wikitext103/torch_dataset.py --num_workers 8 --num_total_samples 100000
+# #asr
+# python eval_torch.py --dataset_file pipelines/commonvoice/torch_dataset.py --num_workers 8 --num_total_samples 10000
+# # ssd
+# python eval_torch.py --dataset_file pipelines/coco/torch_dataset.py --num_workers 8

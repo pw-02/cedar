@@ -120,7 +120,8 @@ def main():
         "--dataset_file",
         type=str,
         help="Path to Python file defining dataset.",
-        required=True,
+        required=False,
+        default="evaluation/pipelines/simclrv2/torch_dataset_s3_pipe.py",
     )
     parser.add_argument(
         "--dataset_func",
@@ -145,6 +146,7 @@ def main():
         "--num_total_samples",
         type=int,
         help="Number of samples to process in total. If not set, process all.",
+        default=None,
     )
     parser.add_argument(
         "--log_level",
@@ -173,6 +175,7 @@ def main():
         type=float,
         help="If set, sleep the profiler for <iteration_time> seconds \
             for each iteration.",
+        default=None,
     )
     parser.add_argument(
         "--num_workers",
