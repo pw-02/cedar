@@ -24,9 +24,9 @@ from cedar.sources import S3ImageSource
 from evaluation.cedar_utils import CedarEvalSpec
 
 
-DATASET_LOC = "s3://sdl-cifar10/test"
-IMG_HEIGHT = 32
-IMG_WIDTH = 32
+DATASET_LOC = "s3://imagenet1k-sdl/train"
+IMG_HEIGHT = 244
+IMG_WIDTH = 244
 GAUSSIAN_BLUR_KERNEL_SIZE = 11
 
 
@@ -34,7 +34,7 @@ def to_float(x):
     return x.to(torch.float32)
 
 
-class SimCLRV2Feature(Feature):
+class ImageNetFeature(Feature):
     def __init__(self, batch_size: int):
         super().__init__()
         self.batch_size = batch_size
@@ -48,16 +48,15 @@ class SimCLRV2Feature(Feature):
             transforms.RandomResizedCrop((IMG_HEIGHT, IMG_WIDTH)),
             tag="crop",
         )
-        # fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
-        #     ["crop"]
-        # )
-        # fp = MapperPipe(
-        #     fp, transforms.ColorJitter(0.1, 0.1, 0.1, 0.1), tag="jitter"
-        # )
+        fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
+            ["crop"]
+        )
+        fp = MapperPipe(
+            fp, transforms.ColorJitter(0.2, 0.2, 0.2, 0.1), tag="jitter"
+        )
         # fp = MapperPipe(fp, transforms.Grayscale(num_output_channels=1))
         # fp = MapperPipe(fp, transforms.GaussianBlur(GAUSSIAN_BLUR_KERNEL_SIZE))
-        fp = MapperPipe(
-            fp, transforms.Normalize((0.1307,), (0.3081,))
+        fp = MapperPipe(fp, transforms.Normalize((0.1307,), (0.3081,))
         ).depends_on(["float"])
         fp = BatcherPipe(fp, batch_size=self.batch_size).fix()
         return fp
@@ -67,7 +66,7 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
   
     ctx = CedarContext(ray_config=spec.to_ray_config())
     source = S3ImageSource(DATASET_LOC)
-    feature = SimCLRV2Feature(batch_size=spec.batch_size)
+    feature = ImageNetFeature(batch_size=spec.batch_size)
     feature.apply(source)
 
     if spec.config:

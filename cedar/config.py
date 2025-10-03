@@ -3,7 +3,9 @@ Config file for cedar
 """
 
 from typing import Type, TypeVar, Optional
-import ray
+import rayException has occurred: ModuleNotFoundError
+No module named 'ray'
+  File "C:\Users\pw\pr
 import logging
 
 logger = logging.getLogger(__name__)

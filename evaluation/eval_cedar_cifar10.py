@@ -29,7 +29,7 @@ class ExtendedCedarEvalSpec(CedarEvalSpec):
         self,
         *args,
         model_name: str = "resnet18",
-        num_classes: int = 1000,
+        num_classes: int = 10,
         learning_rate: float = 1e-3,
         max_epochs: int = 10,
         max_training_steps: Optional[int] = None,
@@ -335,7 +335,7 @@ def create_spec(args: argparse.Namespace) -> ExtendedCedarEvalSpec:
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluation Runner")
-    parser.add_argument("--dataset_file", type=str, default="pipelines/cifar10/cedar_s3_dataset.py")
+    parser.add_argument("--dataset_file", type=str, default="")
     parser.add_argument("--dataset_func", type=str, default="get_dataset")
     parser.add_argument("--batch_size", "-b", type=int, default=128)
     parser.add_argument("--num_epochs", type=int, default=1)
