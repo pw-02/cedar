@@ -5,7 +5,7 @@ cluster_name: cedar
 # node.
 # Disable autoscaling
 min_workers: 0
-max_workers: 0
+max_workers: 1
 
 # The autoscaler will scale up the cluster faster with higher upscaling speed.
 # E.g., if the task requires adding more nodes then autoscaler will gradually
@@ -156,7 +156,7 @@ initialization_commands: []
 
 # List of shell commands to run to set up nodes.
 setup_commands:
-    - source ~/anaconda3/etc/profile.d/conda.sh && conda activate myenv
+    - conda activate myenv
 
     # Note: if you're developing Ray, you probably want to create a Docker image that
     # has your Ray repo pre-cloned. Then, you can replace the pip installs
