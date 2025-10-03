@@ -22,7 +22,7 @@ from torchvision.models import list_models as list_torchvision_models
 from torchvision.models import get_model as get_torchvision_model
 from evaluation.cedar_utils import CedarEvalSpec
 from evaluation.profiler import Profiler
-from evaluation.pipelines.simclrv2.cedar_dataset_s3 import get_dataset
+from evaluation.pipelines.imagenet.cedar_s3_dataset import get_dataset
 
 class ExtendedCedarEvalSpec(CedarEvalSpec):
     def __init__(
@@ -185,15 +185,15 @@ def train_loop(
                 "train_loss": avg_loss,
                 "top1_acc": acc["top1"],
                 "top5_acc": acc["top5"],
-                # "fetch_time_s": getattr(meta, "fetch_time", 0.0),
-                # "transform_time_s": getattr(meta, "transform_time", 0.0),
-                # "grpc_overhead_s": getattr(meta, "grpc_overhead", 0.0),
-                # "total_dataload_time_s": wait_for_data_time + getattr(spec, "data_fetch_time", 0.0),
-                # "cache_hit": int(getattr(meta, "cache_hit", 0)),
+                "fetch_time_s": 0.0,
+                "transform_time_s": 0.0,
+                "grpc_overhead_s": 0.0,
+                "total_dataload_time_s": wait_for_data_time + 0.0,
+                "cache_hit": 0,
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                 "elapsed_time_s": elapsed,
-                # "cache_length": getattr(meta, "cache_length", -1),
-                # "cache_polling_time":  getattr(meta, "cache_polling_time", 0.0) #time spent polling th cache
+                "cache_length": 0,
+                "cache_polling_time": 0.0
 
             }
         )

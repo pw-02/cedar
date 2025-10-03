@@ -1,0 +1,41 @@
+physical_plan:
+  graph:
+    0: '5'
+    1: '0'
+    2: '3'
+    3: '1'
+    4: '2'
+    5: ''
+  n_local_workers: 20
+  pipes:
+    0:
+      name: BatcherPipe(batch_size=1)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    1:
+      name: MapperPipe_Normalize(mean=(0.1307,), std=(0.3081,))
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    2:
+      name: MapperPipe_RandomResizedCrop(size=(32, 32), scale=(0.08, 1.0), ratio=(0.75,
+        1.3333), interpolation=bilinear, antialias=warn)
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    3:
+      name: MapperPipe_to_float
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    4:
+      name: S3SourcePipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS
+    5:
+      name: PrefetcherPipe
+      variant: INPROCESS
+      variant_ctx:
+        variant_type: INPROCESS

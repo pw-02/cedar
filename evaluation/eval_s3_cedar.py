@@ -155,7 +155,7 @@ def main():
         "--dataset_file",
         type=str,
         help="Path to Python file defining dataset.",
-        default="evaluation/pipelines/simclrv2/cedar_remote_dataset.py",
+        default="evaluation/pipelines/cifar10/cedar_s3_dataset.py",
         required=False,
     )
     parser.add_argument(
@@ -214,7 +214,7 @@ def main():
         "--master_feature_config",
         type=str,
         help="If path specified, use this feature config for all features.",
-        default="",
+        default="evaluation/profiled_plans/cifar10_plan.yml",
         # default="pipelines/simclrv2/configs/eval_cedar_local.yaml",
     )
     parser.add_argument(

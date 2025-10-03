@@ -99,7 +99,7 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
 if __name__ == "__main__":
     ds = get_dataset(
         CedarEvalSpec(
-            1, None, 1, disable_optimizer=True, disable_controller=True
+            1, None, 1, disable_optimizer=True, disable_controller=True, run_profiling=False
         )
     )
 

@@ -22,7 +22,7 @@ from torchvision.models import list_models as list_torchvision_models
 from torchvision.models import get_model as get_torchvision_model
 from evaluation.cedar_utils import CedarEvalSpec
 from evaluation.profiler import Profiler
-from evaluation.pipelines.simclrv2.cedar_dataset_s3 import get_dataset
+from evaluation.pipelines.cifar10.cedar_s3_dataset import get_dataset
 
 class ExtendedCedarEvalSpec(CedarEvalSpec):
     def __init__(

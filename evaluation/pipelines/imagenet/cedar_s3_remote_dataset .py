@@ -1,12 +1,9 @@
 import pathlib
-import torch
 import multiprocessing as mp
-import logging
 
 from typing import List
 
 from torchvision import transforms
-from torchvision.io import ImageReadMode
 
 from cedar.client import DataSet
 from cedar.config import CedarContext
@@ -15,45 +12,39 @@ from cedar.pipes import (
     Pipe,
     MapperPipe,
     BatcherPipe,
-    ImageReaderPipe,
-    S3ImageReaderPipe,
 )
 from cedar.sources import LocalFSSource
 from cedar.sources import S3ImageSource
-
 from evaluation.cedar_utils import CedarEvalSpec
+from cedar.pipes.custom.simclrv2_pytorch import read_image_pytorch, to_float
 
 
-DATASET_LOC = "s3://sdl-cifar10/test"
+DATASET_LOC = "datasets/imagenette2"
 IMG_HEIGHT = 244
 IMG_WIDTH = 244
 GAUSSIAN_BLUR_KERNEL_SIZE = 11
 
 
-def to_float(x):
-    return x.to(torch.float32)
-
-
-class SimCLRV2Feature(Feature):
+class ImageNetFeature(Feature):
     def __init__(self, batch_size: int):
         super().__init__()
         self.batch_size = batch_size
 
     def _compose(self, source_pipes: List[Pipe]):
         fp = source_pipes[0]
-        # fp = ImageReaderPipe(fp, mode=ImageReadMode.RGB).fix()
+        fp = MapperPipe(fp, read_image_pytorch).fix()
         fp = MapperPipe(fp, to_float, tag="float")
         fp = MapperPipe(
             fp,
             transforms.RandomResizedCrop((IMG_HEIGHT, IMG_WIDTH)),
             tag="crop",
         )
-        # fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
-        #     ["crop"]
-        # )
-        # fp = MapperPipe(
-        #     fp, transforms.ColorJitter(0.1, 0.1, 0.1, 0.1), tag="jitter"
-        # )
+        fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
+            ["crop"]
+        )
+        fp = MapperPipe(
+            fp, transforms.ColorJitter(0.2, 0.2, 0.2, 0.1), tag="jitter"
+        )
         # fp = MapperPipe(fp, transforms.Grayscale(num_output_channels=1))
         # fp = MapperPipe(fp, transforms.GaussianBlur(GAUSSIAN_BLUR_KERNEL_SIZE))
         fp = MapperPipe(
@@ -64,10 +55,10 @@ class SimCLRV2Feature(Feature):
 
 
 def get_dataset(spec: CedarEvalSpec) -> DataSet:
-  
+ 
     ctx = CedarContext(ray_config=spec.to_ray_config())
     source = S3ImageSource(DATASET_LOC)
-    feature = SimCLRV2Feature(batch_size=spec.batch_size)
+    feature = ImageNetFeature(batch_size=spec.batch_size)
     feature.apply(source)
 
     if spec.config:
@@ -75,10 +66,8 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
             ctx,
             {"feature": feature},
             feature_config=spec.config,
-            # enable_controller=False,
-            # enable_optimizer=False,
-            # run_profiling=True,
-
+            enable_controller=False,
+            enable_optimizer=False,
         )
     else:
         dataset = DataSet(
@@ -101,28 +90,14 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
         )
     return dataset
 
-def main():
-    logging.basicConfig(level=logging.INFO)
-    spec = CedarEvalSpec(1, None, 1)
-    spec.run_profiling = False
-    spec.disable_optimizer = True
-    spec.disable_prefetch = True
-    # spec.disable_optimizer = True
-    spec.disable_controller = True
-    spec.disable_parallelism = True
-
-    ds = get_dataset(spec)
-    
-
-    i = 0
-    for f in ds:
-        # print(f)
-        print(f)
-        print(f.size())
-        if i == 10:
-            break
-        i += 1
-
 
 if __name__ == "__main__":
-    main()
+    ds = get_dataset(
+        CedarEvalSpec(
+            1, None, 1, disable_optimizer=True, disable_controller=True
+        )
+    )
+
+    for x in ds:
+        print(x.data)
+        break

@@ -24,7 +24,7 @@ from cedar.sources import S3ImageSource
 from evaluation.cedar_utils import CedarEvalSpec
 
 
-DATASET_LOC = "s3://sdl-cifar10/test"
+DATASET_LOC = "s3://sdl-cifar10/train"
 IMG_HEIGHT = 32
 IMG_WIDTH = 32
 GAUSSIAN_BLUR_KERNEL_SIZE = 11
@@ -77,8 +77,6 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
             feature_config=spec.config,
             enable_controller=False,
             enable_optimizer=False,
-            # run_profiling=True,
-
         )
     else:
         dataset = DataSet(
