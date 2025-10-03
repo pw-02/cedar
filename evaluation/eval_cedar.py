@@ -155,6 +155,7 @@ def main():
         "--dataset_file",
         type=str,
         help="Path to Python file defining dataset.",
+        default="pipelines/simclrv2/cedar_dataset.py",
         required=True,
     )
     parser.add_argument(
