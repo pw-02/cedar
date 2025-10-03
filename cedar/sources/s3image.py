@@ -194,14 +194,3 @@ class S3ImageSource(Source):
         pipe = S3SourcePipe(self.source, rank_spec=self.rank_spec)
         pipe.fix()
         return pipe
-
-# @cedar_pipe(
-#     CedarPipeSpec(
-#         is_mutable=False,
-#         mutable_variants=[
-#             PipeVariantType.INPROCESS,
-#         ],
-#         is_fusable=False,
-#         is_shardable=True,
-#     )
-# )
