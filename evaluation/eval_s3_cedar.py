@@ -316,7 +316,7 @@ def main():
     logging.basicConfig(level=args.log_level.upper())
 
     spec = create_spec(args)
-    spec.run_profiling = True
+    # spec.run_profiling = True
 
     # Set torch parallelism
     if not args.allow_torch_parallelism:
