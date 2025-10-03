@@ -3,6 +3,7 @@ import glob
 from urllib.parse import urlparse
 import ray
 import logging
+
 from torch.utils.data import Dataset
 from torchdata.datapipes.iter import FileLister
 from torchvision.io import decode_image, ImageReadMode
@@ -74,9 +75,6 @@ class S3ImageDataset(Dataset):
         # img = Image.open(BytesIO(obj["Body"].read())).convert("RGB")
         img_tensor = decode_image(torch.frombuffer(img_bytes, dtype=torch.uint8), mode=ImageReadMode.RGB)
         return img_tensor
-
-    def __len__(self):
-        return len(self.keys)
 
     def __getitem__(self, idx):
         key = self.keys[idx]

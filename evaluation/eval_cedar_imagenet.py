@@ -18,13 +18,11 @@ import timm
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision.transforms as T
-from torch.utils.data import DataLoader
 from torchvision.models import list_models as list_torchvision_models
 from torchvision.models import get_model as get_torchvision_model
-
 from evaluation.cedar_utils import CedarEvalSpec
 from evaluation.profiler import Profiler
+from evaluation.pipelines.simclrv2.cedar_dataset_s3 import get_dataset
 
 class ExtendedCedarEvalSpec(CedarEvalSpec):
     def __init__(
@@ -50,8 +48,9 @@ class ExtendedCedarEvalSpec(CedarEvalSpec):
         self.max_training_time_sec = max_training_time_sec
         self.seed = seed
         self.results_path = results_path
-        self.job_id = job_id or f"job_{int(time.time())}"
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.cpu_only = True
+        self.job_id = job_id or f"job_{int(time.time())}_{model_name}"
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") if not self.cpu_only else torch.device("cpu")
 
 
 def train_image_classification_model(spec: ExtendedCedarEvalSpec, dataset_file, dataset_func):
@@ -61,7 +60,8 @@ def train_image_classification_model(spec: ExtendedCedarEvalSpec, dataset_file, 
         pretrained=False
     ).to(spec.device)
     optimizer = optim.Adam(model.parameters(), lr=spec.learning_rate)
-    dataloader = _get_profiler(dataset_file, dataset_func, spec)
+    dataloader = get_dataset(spec)
+    # _get_profiler(dataset_file, dataset_func, spec)
     _train_loop_driver(model=model, optimizer=optimizer, train_dataloader=dataloader, spec=spec)
 
 def _train_loop_driver(model, optimizer, train_dataloader, spec: ExtendedCedarEvalSpec):
@@ -129,8 +129,16 @@ def train_loop(
     last_step_time = time.perf_counter()
     first_step_completed_time = None
 
-    for batch_idx, (batch, meta) in enumerate(train_dataloader, start=1):
-        inputs, labels = batch
+    for batch_idx, (inputs) in enumerate(train_dataloader, start=1):
+        
+        # generate random integer labels in [0, num_classes-1]
+        labels = torch.randint(
+            low=0,
+            high=spec.num_classes,
+            size=(inputs.size(0),),
+            device=spec.device
+        )
+
         inputs, labels = inputs.to(spec.device), labels.to(spec.device)
 
         wait_for_data_time = time.perf_counter() - last_step_time
@@ -166,7 +174,7 @@ def train_loop(
               { 
                 "job_id": job_id,
                 "epoch": current_epoch,
-                "batch_id": getattr(meta, "batch_id", -1),
+                "batch_id": batch_idx,
                 "num_torch_workers": getattr(train_dataloader, "num_workers", 0),
                 "device": spec.device.type,
                 "batch_index": batch_idx,
@@ -177,15 +185,15 @@ def train_loop(
                 "train_loss": avg_loss,
                 "top1_acc": acc["top1"],
                 "top5_acc": acc["top5"],
-                "fetch_time_s": getattr(meta, "fetch_time", 0.0),
-                "transform_time_s": getattr(meta, "transform_time", 0.0),
-                "grpc_overhead_s": getattr(meta, "grpc_overhead", 0.0),
-                "total_dataload_time_s": getattr(meta, "total_time", 0.0),
-                "cache_hit": int(getattr(meta, "cache_hit", 0)),
+                # "fetch_time_s": getattr(meta, "fetch_time", 0.0),
+                # "transform_time_s": getattr(meta, "transform_time", 0.0),
+                # "grpc_overhead_s": getattr(meta, "grpc_overhead", 0.0),
+                # "total_dataload_time_s": wait_for_data_time + getattr(spec, "data_fetch_time", 0.0),
+                # "cache_hit": int(getattr(meta, "cache_hit", 0)),
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                 "elapsed_time_s": elapsed,
-                "cache_length": getattr(meta, "cache_length", -1),
-                "cache_polling_time":  getattr(meta, "cache_polling_time", 0.0) #time spent polling th cache
+                # "cache_length": getattr(meta, "cache_length", -1),
+                # "cache_polling_time":  getattr(meta, "cache_polling_time", 0.0) #time spent polling th cache
 
             }
         )
@@ -201,14 +209,14 @@ def train_loop(
                 f.write(",".join(str(v) for v in metrics.values()) + "\n")
       
         print(
-            f" Job {job_id} | Epoch:{metrics['epoch']}({metrics['batch_index']}/{len(train_dataloader)}) |"
-            f" fetch:{metrics['fetch_time_s']:.2f}s |"
-            f" transform:{metrics['transform_time_s']:.2f}s |"
+            f" Job {job_id} | Epoch:{metrics['epoch']}(Batch {metrics['batch_index']}) |"
+            # f" fetch:{metrics['fetch_time_s']:.2f}s |"
+            # f" transform:{metrics['transform_time_s']:.2f}s |"
             f" gpu:{metrics['gpu_time_s']:.2f}s |"
             f" delay:{metrics['wait_for_data_time_s']:.2f}s |"
             f" elapsed:{metrics['elapsed_time_s']:.2f}s |"
-            f" hit:{metrics['cache_hit']} |"
-            f" poll:{metrics['cache_polling_time']:.2f}s |"
+            # f" hit:{metrics['cache_hit']} |"
+            # f" poll:{metrics['cache_polling_time']:.2f}s |"
             f"batches/s:{(batch_idx+1) / time_since_first_step if time_since_first_step > 0 else 0:.2f}"
         )
 
@@ -342,7 +350,7 @@ def main():
     parser.add_argument("--profiled_stats", type=str, default="")
     parser.add_argument("--run_profiling", action="store_true")
     parser.add_argument("--allow_torch_parallelism", action="store_true")
-    parser.add_argument("--disable_optimizer", action="store_true")
+    parser.add_argument("--disable_optimizer", action="store_false")
     parser.add_argument("--disable_controller", action="store_true")
     parser.add_argument("--disable_prefetch", action="store_true")
     parser.add_argument("--disable_offload", action="store_true")
@@ -366,6 +374,17 @@ def main():
     logging.basicConfig(level=args.log_level.upper())
 
     #append model name and timestamp to results path
+
+    # spec.run_profiling = False
+    # spec.disable_optimizer = True
+    # spec.disable_prefetch = True
+    # # spec.disable_optimizer = True
+    # spec.disable_controller = True
+    # spec.disable_parallelism = True
+
+
+
+
     args.results_path = os.path.join(args.results_path, f"{args.model_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
     os.makedirs(args.results_path, exist_ok=True)
     with open(os.path.join(args.results_path, "args.txt"), "w") as f:
@@ -377,6 +396,8 @@ def main():
     if not args.allow_torch_parallelism:
         logging.warning("Setting torch threads to 1")
         torch.set_num_threads(1)
+
+
 
     train_image_classification_model(spec, args.dataset_file, args.dataset_func)
 
