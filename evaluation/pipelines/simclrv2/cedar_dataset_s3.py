@@ -75,8 +75,8 @@ def get_dataset(spec: CedarEvalSpec) -> DataSet:
             ctx,
             {"feature": feature},
             feature_config=spec.config,
-            enable_controller=False,
-            enable_optimizer=False,
+            # enable_controller=False,
+            # enable_optimizer=False,
             # run_profiling=True,
 
         )
