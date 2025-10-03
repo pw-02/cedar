@@ -17,11 +17,12 @@ from cedar.pipes import (
     ImageReaderPipe,
 )
 from cedar.sources import LocalFSSource
+from cedar.sources import S3ImageSource
 
 from evaluation.cedar_utils import CedarEvalSpec
 
 
-DATASET_LOC = "datasets/imagenette2"
+DATASET_LOC = "s3://sdl-cifar10/test"
 IMG_HEIGHT = 244
 IMG_WIDTH = 244
 GAUSSIAN_BLUR_KERNEL_SIZE = 11
@@ -61,14 +62,9 @@ class SimCLRV2Feature(Feature):
 
 
 def get_dataset(spec: CedarEvalSpec) -> DataSet:
-    data_dir = (
-        pathlib.Path(__file__).resolve().parents[2].joinpath(DATASET_LOC)
-    )
-
-    train_filepath = pathlib.Path(data_dir) / pathlib.Path("imagenette2/train")
-
+  
     ctx = CedarContext(ray_config=spec.to_ray_config())
-    source = LocalFSSource(str(train_filepath), recursive=True)
+    source = S3ImageSource(DATASET_LOC)
     feature = SimCLRV2Feature(batch_size=spec.batch_size)
     feature.apply(source)
 
