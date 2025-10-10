@@ -29,7 +29,10 @@ taskset -c 0 python evaluation/eval_s3_cedar.py --dataset_file evaluation/pipeli
 python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_dataset.py --profiled_stats /tmp/feature_profile.yml --generate_plan
 
 
-python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_dataset.py --run_profiling --use_ray
+python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_dataset.py --run_profiling --use_ray --ray_ip 172.31.0.170
 
 
  python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_dataset.py --profiled_stats  /tmp/feature_profile.yml --disable_offload 
+
+
+ 172.31.0.170

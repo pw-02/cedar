@@ -152,7 +152,9 @@ rsync_filter:
 # List of commands that will be run before `setup_commands`. If docker is
 # enabled, these commands will run outside the container and before docker
 # is setup.
-initialization_commands: []
+initialization_commands:
+  - echo ". ~/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+  - echo "conda activate myenv" >> ~/.bashrc
 
 # List of shell commands to run to set up nodes.
 # === setup_commands ===
@@ -163,12 +165,13 @@ setup_commands:
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate myenv || { echo "❌ Failed to activate conda env"; exit 1; }
     cd /home/ubuntu/cedar || { echo "❌ /home/ubuntu/cedar not found"; exit 1; }
-    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
-    echo "✅ Setup complete in $(pwd)"
-    pip install -e . && \
-    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar:/home/ubuntu/cedar_dataset && \
+    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar:/home/ubuntu/cedar_dataset
+    pip install -U "ray[default]"
+    pip install -e .
     which python
-    which ray || echo "⚠️ ray not found in PATH (check pip install)"
+    which ray
+    echo "✅ Setup complete in $(pwd)"
+
 
 
   # - git pull
