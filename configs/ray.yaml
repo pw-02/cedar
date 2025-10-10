@@ -165,6 +165,7 @@ setup_commands:
     cd /home/ubuntu/cedar || { echo "❌ /home/ubuntu/cedar not found"; exit 1; }
     git pull
     pip install -e .  # installs cedar_s3_dataset and dependencies
+    pip install click
     export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
     echo "✅ Setup complete in $(pwd)"
     which python
