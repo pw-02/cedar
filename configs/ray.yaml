@@ -157,6 +157,11 @@ initialization_commands: []
 # List of shell commands to run to set up nodes.
 setup_commands:
     - source ~/miniconda3/etc/profile.d/conda.sh && conda activate myenv
+    - cd cedar
+    - export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
+    - pwd
+
+
     # - pip install "ray[default]"
     
     #&& pip install "click==8.2.1"
