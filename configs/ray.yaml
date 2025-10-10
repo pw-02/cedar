@@ -165,6 +165,11 @@ setup_commands:
     cd /home/ubuntu/cedar || { echo "❌ /home/ubuntu/cedar not found"; exit 1; }
     export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
     echo "✅ Setup complete in $(pwd)"
+    pip install -e . && \
+    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar:/home/ubuntu/cedar_dataset && \
+    which python
+    which ray || echo "⚠️ ray not found in PATH (check pip install)"
+
 
   # - git pull
   # - export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
@@ -192,18 +197,31 @@ worker_setup_commands: []
 
 # Command to start ray on the head node. You don't need to change this.
 head_start_ray_commands:
-    - ray stop
-    - >-
-      ray start
-      --head
-      --port=6379
-      --object-manager-port=8076
+  - |
+    source ~/miniconda3/etc/profile.d/conda.sh && \
+    conda activate myenv && \
+    cd /home/ubuntu/cedar && \
+    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar:/home/ubuntu/cedar_dataset && \
+    ray stop
+  - |
+
+    ray start \
+      --head \
+      --port=6379 \
+      --object-manager-port=8076 \
       --autoscaling-config=~/ray_bootstrap_config.yaml
 
-# Command to start ray on worker nodes. You don't need to change this.
 worker_start_ray_commands:
-    - ray stop
-    - >-
-      ray start
-      --address=$RAY_HEAD_IP:6379
+  - |
+    source ~/miniconda3/etc/profile.d/conda.sh && \
+    conda activate myenv && \
+    cd /home/ubuntu/cedar && \
+    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar:/home/ubuntu/cedar_dataset && \
+    ray stop
+  - |
+    source ~/miniconda3/etc/profile.d/conda.sh && \
+    conda activate myenv && \
+    cd /home/ubuntu/cedar/evaluation && \
+    ray start \
+      --address=$RAY_HEAD_IP:6379 \
       --object-manager-port=8076
