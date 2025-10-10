@@ -10,3 +10,15 @@ taskset -c 0 python evaluation/eval_s3_cedar.py --dataset_file evaluation/pipeli
 mv /tmp/feature_profile.yml evaluation/profiled/imagenet_profiling.yml
 python evaluation/eval_s3_cedar.py --dataset_file evaluation/pipelines/imagenet/cedar_s3_dataset.py --profiled_stats evaluation/profiled/imagenet_profiling.yml --generate_plan --disable_offload
 mv /tmp/cedar_optimized_plan.yml evaluation/plans/imagenet_plan.yml
+
+
+
+#imagenet
+taskset -c 0 python evaluation/eval_s3_cedar.py --dataset_file evaluation/pipelines/imagenet/cedar_s3_dataset.py --run_profiling
+mv /tmp/feature_profile.yml evaluation/profiled/imagenet_profiling.yml
+python evaluation/eval_s3_cedar.py --dataset_file evaluation/pipelines/imagenet/cedar_s3_dataset.py --profiled_stats evaluation/profiled/imagenet_profiling.yml --generate_plan
+mv /tmp/cedar_optimized_plan.yml evaluation/plans/imagenet_plan.yml
+
+
+
+taskset -c 0 python evaluation/eval_s3_cedar.py --dataset_file evaluation/pipelines/cifar10/cedar_s3_dataset.py --run_profiling --use_ray --ray_ip 172.31.24.71
