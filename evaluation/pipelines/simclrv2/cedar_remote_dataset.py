@@ -42,11 +42,11 @@ class SimCLRV2Feature(Feature):
         fp = MapperPipe(fp, transforms.RandomHorizontalFlip()).depends_on(
             ["crop"]
         )
-        fp = MapperPipe(
-            fp, transforms.ColorJitter(0.1, 0.1, 0.1, 0.1), tag="jitter"
-        )
-        fp = MapperPipe(fp, transforms.Grayscale(num_output_channels=1))
-        fp = MapperPipe(fp, transforms.GaussianBlur(GAUSSIAN_BLUR_KERNEL_SIZE))
+        # fp = MapperPipe(
+        #     fp, transforms.ColorJitter(0.1, 0.1, 0.1, 0.1), tag="jitter"
+        # )
+        # fp = MapperPipe(fp, transforms.Grayscale(num_output_channels=1))
+        # fp = MapperPipe(fp, transforms.GaussianBlur(GAUSSIAN_BLUR_KERNEL_SIZE))
         fp = MapperPipe(
             fp, transforms.Normalize((0.1307,), (0.3081,))
         ).depends_on(["float"])
