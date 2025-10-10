@@ -26,3 +26,6 @@ python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_dataset.py --profil
 # python eval_cedar.py --dataset_file pipelines/coco/cedar_dataset.py --profiled_stats pipelines/coco/stats/coco_local_stats.yaml --master_feature_config pipelines/coco/configs/cedar_local_plan.yml
 
 # python eval_cedar.py --dataset_file pipelines/coco/cedar_tf_dataset.py --profiled_stats pipelines/coco/stats/coco_tf_local_stats.yaml --master_feature_config pipelines/coco/configs/cedar_tf_local_plan.yml
+
+
+python eval_cedar.py --dataset_file pipelines/simclrv2/cedar_dataset.py --run_profiling --generate_plan

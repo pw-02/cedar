@@ -158,7 +158,8 @@ initialization_commands: []
 setup_commands:
     - source ~/miniconda3/etc/profile.d/conda.sh && conda activate myenv
     - cd cedar
-    - export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
+    - git pull
+    # - export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
     - pwd
 
 
