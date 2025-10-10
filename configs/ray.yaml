@@ -156,14 +156,20 @@ initialization_commands: []
 
 # List of shell commands to run to set up nodes.
 # === setup_commands ===
+# === setup_commands ===
 setup_commands:
   - |
     echo ">>> Setting up node..."
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate myenv || { echo "❌ Failed to activate conda env"; exit 1; }
     cd /home/ubuntu/cedar || { echo "❌ /home/ubuntu/cedar not found"; exit 1; }
-    ls
+    git pull
+    pip install -e .  # installs cedar_s3_dataset and dependencies
+    export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
+    echo "✅ Setup complete in $(pwd)"
+    which python
     which ray || echo "⚠️ ray not found in PATH (check pip install)"
+
 
   # - git pull
   # - export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
