@@ -160,7 +160,7 @@ setup_commands:
     - cd cedar
     - ls
     - pwd
-    - git pull
+    # - git pull
     # - export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
 
 
