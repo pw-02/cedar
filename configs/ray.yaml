@@ -156,8 +156,8 @@ initialization_commands: []
 
 # List of shell commands to run to set up nodes.
 setup_commands:
-    - cd cedar && git pull || git clone https://github.com/your/repo.git cedar
     - source ~/miniconda3/etc/profile.d/conda.sh && conda activate myenv
+    - cd /home/ubuntu/cedar && git pull || git clone https://github.com/your/repo.git cedar
     # - pip install "ray[default]"
     
     #&& pip install "click==8.2.1"
