@@ -166,7 +166,7 @@ setup_commands:
     conda activate myenv || { echo "❌ Failed to activate conda env"; exit 1; }
     cd /home/ubuntu/cedar || { echo "❌ /home/ubuntu/cedar not found"; exit 1; }
     export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar:/home/ubuntu/cedar_dataset
-    pip install -U "ray[default]"
+    pip install -U "ray[default]==2.7.0"
     pip install -e .
     which python
     which ray
