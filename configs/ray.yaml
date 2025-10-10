@@ -202,7 +202,7 @@ head_start_ray_commands:
   - |
     source ~/miniconda3/etc/profile.d/conda.sh && \
     conda activate myenv && \
-    cd /home/ubuntu/cedar && \
+    cd /home/ubuntu/cedar/evaluation && \
     ray start \
       --head \
       --port=6379 \
@@ -217,7 +217,7 @@ worker_start_ray_commands:
   - |
     source ~/miniconda3/etc/profile.d/conda.sh && \
     conda activate myenv && \
-    cd /home/ubuntu/cedar && \
+    cd /home/ubuntu/cedar/evaluation && \
     ray start \
       --address=$RAY_HEAD_IP:6379 \
       --object-manager-port=8076
