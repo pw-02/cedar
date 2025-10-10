@@ -163,6 +163,7 @@ setup_commands:
     source ~/miniconda3/etc/profile.d/conda.sh
     conda activate myenv || { echo "❌ Failed to activate conda env"; exit 1; }
     cd /home/ubuntu/cedar || { echo "❌ /home/ubuntu/cedar not found"; exit 1; }
+    pip install ray[default]==2.7.0
     pip install click
     export PYTHONPATH=$PYTHONPATH:/home/ubuntu/cedar
     echo "✅ Setup complete in $(pwd)"
