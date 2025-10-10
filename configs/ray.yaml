@@ -41,7 +41,7 @@ available_node_types:
         # https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert
         node_config:
             InstanceType: c5n.2xlarge
-            ImageId: ami-0211aa824b3d008c7    # <-- replace with your AMI ID
+            ImageId: ami-0278bce36c6b83e80    # <-- replace with your AMI ID
             KeyName: us-west-2-kp       # must exist in your AWS account
             BlockDeviceMappings:
               - DeviceName: /dev/sda1
@@ -84,7 +84,7 @@ available_node_types:
         # https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert
         node_config:
             InstanceType: c5n.2xlarge
-            ImageId: ami-0211aa824b3d008c7   # reuse same AMI
+            ImageId: ami-0278bce36c6b83e80  # reuse same AMI
             KeyName: us-west-2-kp 
             BlockDeviceMappings:
               - DeviceName: /dev/sda1
